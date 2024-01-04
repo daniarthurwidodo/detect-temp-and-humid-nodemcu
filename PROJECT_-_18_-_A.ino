@@ -1,9 +1,8 @@
-#include <b64.h>
-#include <HttpClient.h>
 #include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+//#include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266HTTPClient.h>
 #include "DHT.h"
 #define DHTPIN D5
 #define DHTTYPE DHT22
@@ -16,10 +15,9 @@ int lcdRows = 2;
 //LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows);
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
 
-const char* ssid = "WARKOP3";   // ssid wifi
-const char* password = "Ar456789#@123"; // isikan password wifi
-//Web/Server address to read/write from
-const char* host = "http://192.168.0.102:8000/api/get-data-sensor-A01";   // api
+const char* ssid = "Bangturrr";   // ssid wifi
+const char* password = "P.TS4e118"; // isikan password wifi
+
 float h = 0, t = 0;
 long previousMillis = 0;
 long interval = 2000;
@@ -27,13 +25,13 @@ void setup() {
   Serial.begin(115200);
 
   dht.begin();
-  lcd.begin();
+  lcd.init();
   lcd.backlight();
   lcd.setCursor(0, 0);
-  lcd.print("Send Data Sensor");
+  lcd.print("Kirim data sensor");
 
   lcd.setCursor(0, 1);
-  lcd.print("TO SERVER.......");
+  lcd.print("ke server ...");
 
   WiFi.mode(WIFI_OFF);
   delay(1000);
@@ -62,11 +60,11 @@ void setup() {
 }
 
 void loop() {
-   WiFiClient client;
+  WiFiClient client;
   HTTPClient http;
-  
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();
+
+  int h = dht.readHumidity();
+  int t = dht.readTemperature();
   String ID, TEMP_SENSOR, HUM_SENSOR, postData;
   ID = "A01";
   TEMP_SENSOR = String(t);
@@ -80,14 +78,23 @@ void loop() {
   lcd.print("Humidity: ");
   lcd.setCursor(11  , 1);
   lcd.print(h);
-  //Post Data
-  postData = "id_alat_a=" + ID + "&level_temp_a=" + TEMP_SENSOR + "&level_hum_a=" + HUM_SENSOR;
-  http.begin(client, host ); // need to check
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  int httpCode = http.POST(postData);
+
+  //  Post Data
+  //  postData = "id_alat_a=" + ID + "&level_temp_a=" + TEMP_SENSOR + "&level_hum_a=" + HUM_SENSOR;
+  //  Web Server address to read/write from
+  //  http://localhost:4001/monitor/tambah/01/33/75
+  //  http://103.23.199.113:4001/monitor/add/01/33/75
+  // http://103.23.199.113:4001/monitor/tambah/01/33/75
+  String serverPath = "http://103.23.199.113:4001/monitor/tambah/" + ID + "/" + TEMP_SENSOR + "/" + HUM_SENSOR;   // api
+  http.begin(client, serverPath.c_str() ); // change to string
+  //  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  int httpCode = http.GET();
+  //  int httpCode = http.POST(postData);
   String payload = http.getString();
+  Serial.println(serverPath);
   delay(5000);
   http.end();
+
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Temperatur: ");
@@ -98,6 +105,7 @@ void loop() {
   lcd.setCursor(11  , 1);
   lcd.print(h);
   delay(500);
+
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Temperatur: ");
