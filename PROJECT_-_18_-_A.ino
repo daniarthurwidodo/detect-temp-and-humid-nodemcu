@@ -1,5 +1,5 @@
 #include <ESP8266WiFi.h>
-//#include <ESP8266WiFi.h>
+// #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPClient.h>
@@ -12,16 +12,17 @@ DHT dht(DHTPIN, DHTTYPE);
 #include <OneWire.h>
 int lcdColumns = 16;
 int lcdRows = 2;
-//LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows);
+// LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows);
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
 
-const char* ssid = "Bangturrr";   // ssid wifi
-const char* password = "P.TS4e118"; // isikan password wifi
+const char *ssid = "HOTSPOT";       // ssid wifi
+const char *password = "duaduadua"; // isikan password wifi
 
 float h = 0, t = 0;
 long previousMillis = 0;
 long interval = 2000;
-void setup() {
+void setup()
+{
   Serial.begin(115200);
 
   dht.begin();
@@ -41,11 +42,12 @@ void setup() {
 
   Serial.print("Connecting");
   // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
-  //If connection successful show IP address in serial monitor
+  // If connection successful show IP address in serial monitor
   Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
@@ -55,18 +57,19 @@ void setup() {
   Serial.print("IP address: ");
   lcd.setCursor(0, 1);
   lcd.print(WiFi.localIP());
-  Serial.println(WiFi.localIP());  //IP address assigned to your ESP
+  Serial.println(WiFi.localIP()); // IP address assigned to your ESP
   delay(1000);
 }
 
-void loop() {
+void loop()
+{
   WiFiClient client;
   HTTPClient http;
 
   int h = dht.readHumidity();
   int t = dht.readTemperature();
   String ID, TEMP_SENSOR, HUM_SENSOR, postData;
-  ID = "A01";
+  ID = "gudangRetail";
   TEMP_SENSOR = String(t);
   HUM_SENSOR = String(h);
   lcd.clear();
@@ -76,7 +79,7 @@ void loop() {
   lcd.print(t);
   lcd.setCursor(0, 1);
   lcd.print("Humidity: ");
-  lcd.setCursor(11  , 1);
+  lcd.setCursor(11, 1);
   lcd.print(h);
 
   //  Post Data
@@ -85,8 +88,8 @@ void loop() {
   //  http://localhost:4001/monitor/tambah/01/33/75
   //  http://103.23.199.113:4001/monitor/add/01/33/75
   // http://103.23.199.113:4001/monitor/tambah/01/33/75
-  String serverPath = "http://103.23.199.113:4001/monitor/tambah/" + ID + "/" + TEMP_SENSOR + "/" + HUM_SENSOR;   // api
-  http.begin(client, serverPath.c_str() ); // change to string
+  String serverPath = "https://103.49.238.7:8082/monitor/tambah/" + ID + "/" + TEMP_SENSOR + "/" + HUM_SENSOR; // api
+  http.begin(client, serverPath.c_str());                                                                      // change to string
   //  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   int httpCode = http.GET();
   //  int httpCode = http.POST(postData);
@@ -102,7 +105,7 @@ void loop() {
   lcd.print(t);
   lcd.setCursor(0, 1);
   lcd.print("Humidity: ");
-  lcd.setCursor(11  , 1);
+  lcd.setCursor(11, 1);
   lcd.print(h);
   delay(500);
 
@@ -113,7 +116,7 @@ void loop() {
   lcd.print(t);
   lcd.setCursor(0, 1);
   lcd.print("Humidity: ");
-  lcd.setCursor(11  , 1);
+  lcd.setCursor(11, 1);
   lcd.print(h);
   lcd.clear();
 }
