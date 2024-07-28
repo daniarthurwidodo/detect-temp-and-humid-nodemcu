@@ -15,7 +15,7 @@ int lcdRows = 2;
 // LiquidCrystal_I2C lcd(0x3F, lcdColumns, lcdRows);
 LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
 
-const char *ssid = "HOTSPOT";       // ssid wifi
+const char *ssid = "HOTSPOT"; // ssid wifi
 const char *password = "duaduadua"; // isikan password wifi
 
 float h = 0, t = 0;
@@ -69,7 +69,8 @@ void loop()
   int h = dht.readHumidity();
   int t = dht.readTemperature();
   String ID, TEMP_SENSOR, HUM_SENSOR, postData;
-  ID = "gudangRetail";
+  // gudangRetail gudangDistributor gudangPetani
+  ID = "gudangPetani";
   TEMP_SENSOR = String(t);
   HUM_SENSOR = String(h);
   lcd.clear();
